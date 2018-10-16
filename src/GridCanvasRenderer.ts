@@ -50,6 +50,7 @@ class GridCanvasRenderer {
     private widthCache: object
     private schemaDirty: boolean
     private visibleColumns: any[]
+    private visibleRows: any[]
 
     public constructor(container: HTMLElement) {
         this.canvas = document.createElement('canvas');
@@ -68,6 +69,8 @@ class GridCanvasRenderer {
         this.rows = new RowModel();
         this.viewport = {x: 0, y: 0, width: 0, height: 0};
         this.widthCache = {};
+        this.visibleColumns = [];
+        this.visibleRows = [];
 
         this.schemaDirty = false;
     }
@@ -119,6 +122,7 @@ class GridCanvasRenderer {
 
     public refresh() {
         this.visibleColumns = [];
+        this.visibleRows = [];
         if(this.schemaDirty) {
             this.refreshSchemaTextWidths();
             this.schemaDirty = false;
@@ -216,7 +220,7 @@ class GridCanvasRenderer {
             if(column.align === Alignment.Left) {
                 x += this.cellStyles.horizontalPadding;
             } else if(column.align === Alignment.Right) {
-                x += this.widthCache[column.key];
+                x += this.widthCache[column.key] + this.cellStyles.horizontalPadding;
             } else {
                 x += this.widthCache[column.key] / 2 + this.cellStyles.horizontalPadding;
             }
@@ -298,18 +302,19 @@ class GridCanvasRenderer {
     }
 
     private refreshCellTextWidth() {
-        const rowCount = this.rows.getRowCount();
-        this.schema.forEach(schema => {
-            const key = schema.key;
-            this.context.font = `${this.cellStyles.fontWeight} ${this.cellStyles.fontSize}px ${this.cellStyles.fontFamily}`;
-            for(let i = 0; i < rowCount; i++) {
-                const cellValue = this.rows.getCellValue(i, key);
-                this.widthCache[key] = Math.max(
+        this.context.font = `${this.cellStyles.fontWeight} ${this.cellStyles.fontSize}px ${this.cellStyles.fontFamily}`;
+        const columns = this.getVisibleColumnsAndPositions();
+        const rows = this.getVisibleRowsAndPositions();
+        for(const column of columns) {
+            for(const row of rows) {
+                const cellValue = this.rows.getCellValue(row.index, column.key);
+                this.widthCache[column.key] = Math.max(
                     Math.floor(this.context.measureText(cellValue).width),
-                    this.widthCache[key] || 0
+                    this.widthCache[column.key] || 0
                 );
             }
-        });
+        }
+        this.visibleColumns = [];
     }
 
     private resizeCanvas() {

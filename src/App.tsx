@@ -11,8 +11,7 @@ interface IAppState {
 
 const schema = [{
     key: "country",
-    label: "Country",
-    align: Alignment.Right
+    label: "Country"
   },{
     key: "region",
     label: "Region"

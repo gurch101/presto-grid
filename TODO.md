@@ -1,7 +1,7 @@
 # TODO
 
-- get cell width as max of currently seen cell
 - sticky columns
+- individual cell style overrides
 - value formatters
 - cell/header renderers
 - on cell/header click

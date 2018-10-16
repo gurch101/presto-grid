@@ -41,12 +41,13 @@ describe('ProntoGrid', () => {
     let originalColumnProps;
     beforeAll(async () => {
         await page.goto('http://localhost:3000');
-        originalColumnProps = [...await getColumnProps()];
+        originalColumnProps = await getColumnProps();
     });
 
     beforeEach(async () => {
         await scrollTo(0, 0);
-        columnProps = originalColumnProps;
+        await setColumnProps(originalColumnProps);
+        columnProps = originalColumnProps.map(column => ({...column}));
     });
 
     describe('sticky headers', () => {
@@ -68,7 +69,6 @@ describe('ProntoGrid', () => {
         });
 
         it('should render centered columns', async () => {
-            const columnProps = await getColumnProps();
             columnProps[0].align = 'center'
             await setColumnProps(columnProps);
             const grid = await getScreenshotOfGrid();
@@ -77,9 +77,17 @@ describe('ProntoGrid', () => {
         });
 
         it('should render right-aligned columns', async () => {
-            const columnProps = await getColumnProps();
             columnProps[0].align = 'right'
             await setColumnProps(columnProps);
+            const grid = await getScreenshotOfGrid();
+
+            expect(grid).toMatchImageSnapshot();
+        });
+    });
+
+    describe('column widths', () => {
+        it('should resize columns to be the maximum of the currently visible data', async () => {
+            await scrollTo(0, 500);
             const grid = await getScreenshotOfGrid();
 
             expect(grid).toMatchImageSnapshot();
