@@ -1,5 +1,5 @@
 import * as React from 'react';
-import GridCanvasRenderer, { ICellStyles, IHeaderStyles, ISchema } from './GridCanvasRenderer';
+import GridCanvasRenderer, { Alignment, ICellStyles, IHeaderStyles, ISchema } from './GridCanvasRenderer';
 
 interface IHeaderStyleProps {
     fontSize?: number;
@@ -22,13 +22,26 @@ interface ICellStyleProps {
     verticalPadding?: number
 }
 
+interface ISchemaProps {
+    key: string,
+    label: string,
+    align?: Alignment
+};
+
 interface IProntoGridProps {
     width: number;
     height: number;
     headerStyles?: IHeaderStyleProps
     cellStyles?: ICellStyleProps
-    schema: ISchema[]
+    schema: ISchemaProps[]
     rows: object[]
+}
+
+const getSchema = (schemaProps: ISchemaProps[]): ISchema[] => {
+    return schemaProps.map(schema => ({
+        ...schema,
+        align: schema.align  || Alignment.Center
+    }));
 }
 
 const getCellStyles = (cellStyleProps: ICellStyleProps = {}): ICellStyles => {
@@ -60,23 +73,30 @@ class ProntoGrid extends React.Component<IProntoGridProps> {
     private scrollContainer = React.createRef<HTMLDivElement>()
     private gridRenderer: GridCanvasRenderer
 
+    public refresh() {
+        this.gridRenderer
+            .setWidth(this.props.width)
+            .setHeight(this.props.height)
+            .setHeaderStyles(getHeaderStyles(this.props.headerStyles))
+            .setCellStyles(getCellStyles(this.props.cellStyles))
+            .setSchema(getSchema(this.props.schema))
+            .setRows(this.props.rows)
+            .refresh();
+    }
+
     public componentDidMount() {
         if(this.scrollContainer.current !== null) {
             this.scrollContainer.current.addEventListener('scroll', this.onScroll);
             this.gridRenderer = new GridCanvasRenderer(this.scrollContainer.current);
-            this.gridRenderer
-                .setWidth(this.props.width)
-                .setHeight(this.props.height)
-                .setHeaderStyles(getHeaderStyles(this.props.headerStyles))
-                .setCellStyles(getCellStyles(this.props.cellStyles))
-                .setSchema(this.props.schema)
-                .setRows(this.props.rows)
-                .refresh();
+            this.refresh();
         }
     }
 
+    public componentDidUpdate() {
+        this.refresh();
+    }
+
     public onScroll = (e: any) => {
-        console.log(e);
         this.gridRenderer.onScroll(
             e.target.scrollLeft,
             e.target.scrollTop
@@ -94,4 +114,4 @@ class ProntoGrid extends React.Component<IProntoGridProps> {
 }
 
 export default ProntoGrid;
-export { IProntoGridProps, IHeaderStyles, ICellStyles, ISchema };
+export { IProntoGridProps, IHeaderStyleProps, ICellStyleProps, ISchemaProps, Alignment };

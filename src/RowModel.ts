@@ -8,6 +8,9 @@ class RowModel {
     public setRows(rows: object[]) {
         this.rows = rows;
     }
+    public getRows() {
+        return this.rows;
+    }
 
     public getCellValue(rowIndex: number, attributeName: string) {
         return this.rows[rowIndex][attributeName];

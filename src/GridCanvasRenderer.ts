@@ -1,8 +1,14 @@
 import RowModel from './RowModel';
 
+enum Alignment {
+    Left = 'left',
+    Center = 'center',
+    Right = 'right'
+}
 interface ISchema {
     key: string;
-    label: string
+    label: string;
+    align: Alignment;
 }
 
 interface IFontStyles {
@@ -43,7 +49,7 @@ class GridCanvasRenderer {
     private viewport: IViewport
     private widthCache: object
     private schemaDirty: boolean
-    private dimensionsDirty: boolean
+    private visibleColumns: any[]
 
     public constructor(container: HTMLElement) {
         this.canvas = document.createElement('canvas');
@@ -64,17 +70,20 @@ class GridCanvasRenderer {
         this.widthCache = {};
 
         this.schemaDirty = false;
-        this.dimensionsDirty = false;
     }
 
     public setSchema(schema: ISchema[]) {
-        this.schema = schema;
-        this.schemaDirty = true;
+        if(this.schema !== schema) {
+            this.schema = schema;
+            this.schemaDirty = true;
+        }
         return this;
     }
 
     public setRows(rows: object[]) {
-        this.rows.setRows(rows);
+        if(this.rows.getRows() !== rows) {
+            this.rows.setRows(rows);
+        }
         return this;
     }
 
@@ -91,7 +100,6 @@ class GridCanvasRenderer {
     public setHeight(height: number) {
         if(this.viewport.height !== height) {
             this.viewport.height = height;
-            this.dimensionsDirty = true;
         }
         return this;
     }
@@ -99,7 +107,6 @@ class GridCanvasRenderer {
     public setWidth(width: number) {
         if(this.viewport.width !== width) {
             this.viewport.width = width;
-            this.dimensionsDirty = true;
         }
         return this;
     }
@@ -111,26 +118,23 @@ class GridCanvasRenderer {
     }
 
     public refresh() {
-        const startTime = new Date().getTime();
+        this.visibleColumns = [];
         if(this.schemaDirty) {
             this.refreshSchemaTextWidths();
-            this.resizeCanvas();
             this.schemaDirty = false;
         }
+        this.refreshCellTextWidth();
         this.resizeScrollContainer();
-        this.refreshMaxTextWidth();
+        this.resizeCanvas();
         this.render();
-        const endTime = new Date().getTime();
-        console.log(endTime - startTime);
     }
 
     private render() {
-        // this.context.clearRect(this.viewport.x, this.viewport.y, this.viewport.width, this.viewport.height);
         this.context.clearRect(0, 0, this.viewport.width, this.viewport.height);
-        this.renderGridCells();
-        this.renderGridVerticalLines();
         this.renderGridCellHorizontalLines();
+        this.renderGridCells();
         this.renderGridHeaders();
+        this.renderGridVerticalLines();
     }
 
     private renderLine(fromX: number, fromY: number, toX: number, toY: number) {
@@ -191,6 +195,9 @@ class GridCanvasRenderer {
     }
 
     private getVisibleColumnsAndPositions() {
+        if(this.visibleColumns.length > 0) {
+            return this.visibleColumns;
+        }
         let i = 0;
         let currentX = 0;
         while(currentX < this.viewport.x) {
@@ -202,14 +209,22 @@ class GridCanvasRenderer {
             currentX -= (this.widthCache[this.schema[i].key] + (this.cellStyles.horizontalPadding * 2));
         }
 
-        const visibleColumns = [];
+        this.visibleColumns = [];
         while(currentX < this.viewport.x + this.viewport.width && i < this.schema.length) {
             const column = this.schema[i];
-            visibleColumns.push({key: column.key, label: column.label, x: currentX - this.viewport.x});
+            let x = currentX - this.viewport.x;
+            if(column.align === Alignment.Left) {
+                x += this.cellStyles.horizontalPadding;
+            } else if(column.align === Alignment.Right) {
+                x += this.widthCache[column.key];
+            } else {
+                x += this.widthCache[column.key] / 2 + this.cellStyles.horizontalPadding;
+            }
+            this.visibleColumns.push({...column, x: currentX - this.viewport.x, textX: x});
             currentX += this.widthCache[this.schema[i].key] + (this.cellStyles.horizontalPadding * 2);
             i++;
         }
-        return visibleColumns;
+        return this.visibleColumns;
     }
 
     private renderGridHeaders() {
@@ -228,10 +243,10 @@ class GridCanvasRenderer {
             this.context.lineWidth = this.cellStyles.borderWidth;
             this.context.fillStyle = this.headerStyles.color;
             this.context.textBaseline = 'middle';
-            this.context.textAlign = 'center';
+            this.context.textAlign = column.align;
             this.context.fillText(
                 column.label,
-                column.x + (this.widthCache[column.key] / 2) + this.cellStyles.horizontalPadding,
+                column.textX,
                 this.headerStyles.verticalPadding + (this.headerStyles.fontSize / 2)
             );
         }
@@ -241,17 +256,17 @@ class GridCanvasRenderer {
         this.context.font = `${this.cellStyles.fontWeight} ${this.cellStyles.fontSize}px ${this.cellStyles.fontFamily}`;
         this.context.fillStyle = this.cellStyles.color;
         this.context.textBaseline = 'middle';
-        this.context.textAlign = 'center';
 
         const rows = this.getVisibleRowsAndPositions();
         const columns = this.getVisibleColumnsAndPositions();
 
         for(const row of rows) {
             for(const column of columns) {
+                this.context.textAlign = column.align;
                 const cellValue = this.rows.getCellValue(row.index, column.key);
                 this.context.fillText(
                     cellValue,
-                    column.x + (this.widthCache[column.key] / 2) + this.cellStyles.horizontalPadding,
+                    column.textX,
                     row.y  + this.cellStyles.verticalPadding + this.cellStyles.fontSize / 2
                 )
             }
@@ -259,7 +274,6 @@ class GridCanvasRenderer {
     }
 
     private getCanvasWidth() {
-        // this.refreshMaxTextWidth();
         let width = 0;
         this.schema.forEach(schema => {
             width += this.widthCache[schema.key] + (this.cellStyles.horizontalPadding * 2);
@@ -281,23 +295,9 @@ class GridCanvasRenderer {
                 this.widthCache[column.key] || 0
             );
         }
-        // let x = 0;
-        // while(x < this.viewport.x && initialSchemaIndex < this.schema.length) {
-        //     x += this.widthCache[this.schema[initialSchemaIndex].key];
-        //     initialSchemaIndex++;
-        // }
-
-        // for(let i = initialSchemaIndex; i < this.schema.length && currentWidth < this.viewport.width; i++) {
-        //     const column = this.schema[i];
-        //     this.widthCache[column.key] = Math.max(
-        //         Math.floor(this.context.measureText(column.label).width),
-        //         this.widthCache[column.key] || 0
-        //     );
-        //     currentWidth += this.widthCache[column.key];
-        // }
     }
 
-    private refreshMaxTextWidth() {
+    private refreshCellTextWidth() {
         const rowCount = this.rows.getRowCount();
         this.schema.forEach(schema => {
             const key = schema.key;
@@ -338,4 +338,4 @@ class GridCanvasRenderer {
 }
 
 export default GridCanvasRenderer;
-export { IHeaderStyles, ICellStyles, ISchema };
+export { IHeaderStyles, ICellStyles, ISchema, Alignment };

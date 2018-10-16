@@ -1,15 +1,18 @@
 import * as React from 'react';
 import data from './data';
-import ProntoGrid, { ISchema } from './ProntoGrid';
+import ProntoGrid, { Alignment, ISchemaProps } from './ProntoGrid';
 
 interface IAppState {
   rows: object[],
-  schema: ISchema[]
+  schema: ISchemaProps[],
+  pendingschema: string,
+  pendingrows: string
 }
 
 const schema = [{
     key: "country",
-    label: "Country"
+    label: "Country",
+    align: Alignment.Right
   },{
     key: "region",
     label: "Region"
@@ -75,16 +78,59 @@ class App extends React.Component<any, IAppState> {
     super(props);
     this.state = {
       schema,
-      rows: data
+      rows: data,
+      pendingschema: JSON.stringify(schema, null, 2),
+      pendingrows: JSON.stringify(data, null, 2)
     };
   }
+
+  public onChange = (e: any) => {
+    if(e.target.name === 'schema') {
+      this.setState({
+        pendingschema: e.target.value
+      });
+    } else {
+      this.setState({
+        pendingrows: e.target.value
+      });
+    }
+
+  }
+
+  public applyUpdates = () => {
+    this.setState({
+      schema: JSON.parse(this.state.pendingschema),
+      rows: JSON.parse(this.state.pendingrows)
+    })
+  }
+
   public render() {
     return (
-      <ProntoGrid
-        width={500}
-        height={500}
-        schema={this.state.schema}
-        rows={this.state.rows} />
+      <div>
+        <textarea
+          name="schema"
+          onChange={this.onChange}
+          data-schema="true"
+          style={{height: 200, width: 500}}
+          value={this.state.pendingschema} />
+        <textarea
+          name="rows"
+          onChange={this.onChange}
+          data-rows="true"
+          style={{height: 200, width: 500}}
+          value={this.state.pendingrows} />
+        <button
+          data-apply-changes="true"
+          name="submit"
+          onClick={this.applyUpdates}>
+          Apply Changes
+        </button>
+        <ProntoGrid
+          width={500}
+          height={500}
+          schema={this.state.schema}
+          rows={this.state.rows} />
+      </div>
     );
   }
 }
