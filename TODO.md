@@ -2,7 +2,6 @@
 
 - sticky columns
 - individual cell style overrides
-- value formatters
 - cell/header renderers
 - on cell/header click
 - clipboard

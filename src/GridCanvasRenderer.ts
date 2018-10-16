@@ -196,7 +196,7 @@ class GridCanvasRenderer {
 
         const visibleColumns = this.getVisibleColumnsAndPositions();
         for(const column of visibleColumns) {
-            this.renderVerticalLine(0, 500, column.x);
+            this.renderVerticalLine(0, this.viewport.height, column.x);
         }
     }
 
