@@ -97,8 +97,14 @@ class App extends React.Component<any, IAppState> {
   }
 
   public applyUpdates = () => {
+    /* tslint:disable no-eval */
     this.setState({
-      schema: JSON.parse(this.state.pendingschema),
+      schema: JSON.parse(this.state.pendingschema).map((column: any) => {
+        if(column.valueFormatter) {
+          column.valueFormatter = eval(column.valueFormatter);
+        }
+        return column;
+      }),
       rows: JSON.parse(this.state.pendingrows)
     })
   }

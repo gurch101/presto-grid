@@ -9,6 +9,7 @@ interface ISchema {
     key: string;
     label: string;
     align: Alignment;
+    valueFormatter?: (value: any) => string
 }
 
 interface IFontStyles {
@@ -78,6 +79,7 @@ class GridCanvasRenderer {
     public setSchema(schema: ISchema[]) {
         if(this.schema !== schema) {
             this.schema = schema;
+            this.rows.setSchema(schema);
             this.schemaDirty = true;
         }
         return this;

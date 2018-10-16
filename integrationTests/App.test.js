@@ -83,6 +83,14 @@ describe('ProntoGrid', () => {
 
             expect(grid).toMatchImageSnapshot();
         });
+
+        it('should support value formatters', async () => {
+            columnProps[0].valueFormatter = "(value) => value.toLowerCase()";
+            await setColumnProps(columnProps);
+            const grid = await getScreenshotOfGrid();
+
+            expect(grid).toMatchImageSnapshot();
+        });
     });
 
     describe('column widths', () => {

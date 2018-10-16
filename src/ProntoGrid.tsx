@@ -25,7 +25,8 @@ interface ICellStyleProps {
 interface ISchemaProps {
     key: string,
     label: string,
-    align?: Alignment
+    align?: Alignment,
+    valueFormatter?: (value: any) => string
 };
 
 interface IProntoGridProps {
