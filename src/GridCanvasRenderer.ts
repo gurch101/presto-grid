@@ -151,7 +151,7 @@ class GridCanvasRenderer {
     }
 
     private renderHorizontalLine(fromX: number, toX: number, y: number) {
-        this.renderLine(fromX, y, toX, y);
+        this.renderLine(fromX, y + 0.5, toX, y + 0.5);
     }
 
     private renderVerticalLine(fromY: number, toY: number, x: number) {
