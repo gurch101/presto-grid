@@ -1,8 +1,5 @@
-import { start } from 'repl';
 import GridState from '../GridState';
-import HeaderStyles from '../HeaderStyles';
-import RowModel from '../RowModel';
-import { IBoundingBox, ICellBoundingBox, ICellStyles, ISchema, ITextMeasurer, IVisibleBoundingBoxes } from '../types';
+import { ITextMeasurer, IVisibleBoundingBoxes } from '../types';
 
 interface IWidthCache {
     [key: string]: number
@@ -38,8 +35,8 @@ class GridCellMeasurer {
         let fixedColumnXPosition = 0;
         const columnBoundingBoxes = [];
         const rowBoundingBoxes = [];
-        const headerHeight = this.gridState.headerStyles.getHeaderHeight();
-        const rowHeight = this.gridState.cellStyles.getCellHeight();
+        const headerHeight = this.gridState.styles.headerStyles.getHeight();
+        const rowHeight = this.gridState.styles.rowStyles.getHeight();
 
         for(let i = 0; i < this.gridState.fixedColumnCount; i++) {
             const column = this.gridState.schema[i];
@@ -95,8 +92,8 @@ class GridCellMeasurer {
 
     public getTotalHeight(): number {
         return (
-            this.gridState.headerStyles.getHeaderHeight() +
-            this.gridState.rowModel.getRowCount() * this.gridState.cellStyles.getCellHeight()
+            this.gridState.styles.headerStyles.getHeight() +
+            this.gridState.rowModel.getRowCount() * this.gridState.styles.rowStyles.getHeight()
         );
     }
 
@@ -109,7 +106,7 @@ class GridCellMeasurer {
     }
 
     private computeSchemaTextWidths() {
-        this.measurer.setFont(this.gridState.headerStyles.getHeaderFont());
+        this.measurer.setFont(this.gridState.styles.headerStyles.getFont());
         let currentWidth = 0;
         let startingIndex = 0;
         let endingIndex = 0;
@@ -125,7 +122,7 @@ class GridCellMeasurer {
             startingIndex++;
         }
 
-        let initialXOffset = currentWidth - this.gridState.viewport.x;
+        let initialXOffset = Math.floor(currentWidth - this.gridState.viewport.x);
 
         for(let i = startingIndex; i < this.gridState.schema.length && currentWidth - this.gridState.viewport.x < this.gridState.viewport.width; i++) {
             const column = this.gridState.schema[i];
@@ -135,7 +132,7 @@ class GridCellMeasurer {
             }
             endingIndex = i;
             this.widthCache[column.key] = Math.max(
-                Math.floor(this.measurer.measureText(column.label)) + this.gridState.cellStyles.horizontalPadding * 2,
+                Math.floor(this.measurer.measureText(column.label)) + this.gridState.styles.rowStyles.horizontalPadding * 2,
                 this.widthCache[column.key] || 0
             );
             currentWidth += this.widthCache[column.key];
@@ -145,11 +142,11 @@ class GridCellMeasurer {
     }
 
     private computeCellTextWidths(startingColumnIndex: number, initialXOffset: number) {
-        this.measurer.setFont(this.gridState.cellStyles.getCellFont());
+        this.measurer.setFont(this.gridState.styles.rowStyles.getFont());
 
-        const rowHeight = this.gridState.cellStyles.getCellHeight();
+        const rowHeight = this.gridState.styles.rowStyles.getHeight();
         const startingRowIndex = Math.floor(this.gridState.viewport.y / rowHeight);
-        const initialYOffset = (rowHeight * startingRowIndex) - this.gridState.viewport.y + this.gridState.headerStyles.getHeaderHeight();
+        const initialYOffset = Math.floor((rowHeight * startingRowIndex) - this.gridState.viewport.y + this.gridState.styles.headerStyles.getHeight());
         let endingRowIndex = 0;
         let endingColumnIndex = 0;
         let currentX = initialXOffset;
@@ -160,7 +157,7 @@ class GridCellMeasurer {
             for(let i = startingRowIndex; i < this.gridState.rowModel.getRows().length && currentY < this.gridState.viewport.height; i++) {
                 const cellValue = this.gridState.rowModel.getCellValue(i, column.key);
                 this.widthCache[column.key] = Math.max(
-                    Math.floor(this.measurer.measureText(cellValue)) + this.gridState.cellStyles.horizontalPadding * 2,
+                    Math.floor(this.measurer.measureText(cellValue)) + this.gridState.styles.rowStyles.horizontalPadding * 2,
                     this.widthCache[column.key] || 0
                 );
                 endingRowIndex = i;

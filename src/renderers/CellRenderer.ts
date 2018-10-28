@@ -13,8 +13,20 @@ class CellRenderer implements ICellRenderer {
     }
 
     public setVisibleArea(x: number, y: number, width: number, height: number) {
+        this.context.save();
         this.context.rect(x, y, width, height);
         this.context.clip();
+    }
+
+    public unsetVisibleArea() {
+        this.context.restore();
+    }
+
+    public fillCell(color: string, x: number, y: number, width: number, height: number) {
+        this.context.save();
+        this.context.fillStyle = color;
+        this.context.fillRect(x, y, width, height);
+        this.context.restore();
     }
 
     public renderText(text: string, x: number, y: number, align: Alignment) {

@@ -1,3 +1,4 @@
+import { IStyles } from './types/styles';
 
 export enum Alignment {
     Left = 'left',
@@ -16,6 +17,8 @@ export interface IFontStyles {
     fontSize: number;
     fontFamily: string;
     fontWeight: string;
+    getHeight: () => number;
+    getFont: () => string;
 }
 
 export interface IHeaderStyleProps {
@@ -27,15 +30,7 @@ export interface IHeaderStyleProps {
     verticalPadding?: number;
 }
 
-export interface IHeaderStyles extends IFontStyles {
-    color: string;
-    backgroundColor: string;
-    verticalPadding: number;
-    getHeaderHeight: () => number;
-    getHeaderFont: () => string;
-}
-
-export interface ICellStyleProps {
+export interface IRowStyleProps {
     backgroundColor?: string
     borderColor?: string
     borderWidth?: number
@@ -47,14 +42,27 @@ export interface ICellStyleProps {
     verticalPadding?: number
 }
 
-export interface ICellStyles extends IFontStyles {
+export interface IHeaderStyles extends IFontStyles, IStyles {
+    color: string;
+    verticalPadding: number;
+}
+
+export interface ICellStyleProps {
+    headerStyles?: IHeaderStyleProps
+    rowStyles?: IRowStyleProps
+}
+
+export interface ICellStyles {
+    headerStyles: IHeaderStyles;
+    rowStyles: IRowStyles;
+}
+
+export interface IRowStyles extends IFontStyles, IStyles {
     color: string;
     horizontalPadding: number;
     verticalPadding: number;
     borderColor: string;
     borderWidth: number;
-    getCellHeight: () => number;
-    getCellFont: () => string;
 }
 
 export interface IBoundingBox {
@@ -86,5 +94,7 @@ export interface ILineRenderer {
 export interface ICellRenderer {
     setFont: (font: string) => void;
     setVisibleArea: (x: number, y: number, width: number, height: number) => void;
-    renderText: (text: string, x: number, y: number, align: Alignment) => void
+    unsetVisibleArea: () => void;
+    renderText: (text: string, x: number, y: number, align: Alignment) => void;
+    fillCell: (color: string, x: number, y: number, width: number, height: number) => void;
 }

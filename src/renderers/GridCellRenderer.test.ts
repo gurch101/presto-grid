@@ -1,7 +1,7 @@
-import CellStyles from '../CellStyles';
 import GridState from '../GridState';
 import HeaderStyles from '../HeaderStyles';
 import RowModel from '../RowModel';
+import RowStyles from '../RowStyles';
 import SpyCellRenderer from "../spies/SpyCellRenderer";
 import { Alignment } from '../types';
 import GridCellRenderer from './GridCellRenderer';
@@ -15,8 +15,8 @@ describe('GridCellRenderer', () => {
     beforeEach(() => {
         spyCellRenderer = new SpyCellRenderer();
         gridState = new GridState();
-        gridState.headerStyles = new HeaderStyles({});
-        gridState.cellStyles = new CellStyles({horizontalPadding});
+        gridState.styles.headerStyles = new HeaderStyles({backgroundColor: "red"});
+        gridState.styles.rowStyles = new RowStyles({horizontalPadding, backgroundColor: "green"});
         gridState.schema = [{
             key: "col1",
             label: "Column 1",
@@ -36,51 +36,37 @@ describe('GridCellRenderer', () => {
     });
 
     describe('header cells', () => {
+        const visibleBoundingBoxes = {
+            headers: [{
+                key: "col1",
+                x: 0,
+                y: 0,
+                width: 30,
+                height: 10
+            }, {
+                key: "col2",
+                x: 30,
+                y: 0,
+                width: 30,
+                height: 10
+            }, {
+                key: "col3",
+                x: 60,
+                y: 0,
+                width: 30,
+                height: 10
+            }],
+            rows: []
+        };
         it('should render header text for all visible headers', () => {
-            gridCellRenderer.render({
-                headers: [{
-                    key: "col1",
-                    x: 0,
-                    y: 0,
-                    width: 10,
-                    height: 10
-                }, {
-                    key: "col2",
-                    x: 10,
-                    y: 0,
-                    width: 10,
-                    height: 10
-                }],
-                rows: []
-            });
+            gridCellRenderer.render(visibleBoundingBoxes);
 
             expect(spyCellRenderer.renderTextCalledWith[0].text).toBe("Column 1");
             expect(spyCellRenderer.renderTextCalledWith[1].text).toBe("Column 2");
         });
 
         it('should render header text at the proper position and alignment', () => {
-            gridCellRenderer.render({
-                headers: [{
-                    key: "col1",
-                    x: 0,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: "col2",
-                    x: 30,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: "col3",
-                    x: 60,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }],
-                rows: []
-            });
+            gridCellRenderer.render(visibleBoundingBoxes);
 
             expect(spyCellRenderer.renderTextCalledWith[0].align).toBe(Alignment.Center);
             expect(spyCellRenderer.renderTextCalledWith[0].x).toBe(30 / 2);
@@ -89,9 +75,62 @@ describe('GridCellRenderer', () => {
             expect(spyCellRenderer.renderTextCalledWith[2].align).toBe(Alignment.Right);
             expect(spyCellRenderer.renderTextCalledWith[2].x).toBe(60 + 30 - horizontalPadding);
         });
+
+        it('should fill header cells with the header background color', () => {
+            gridCellRenderer.render(visibleBoundingBoxes);
+
+            visibleBoundingBoxes.headers.forEach((header, i) => {
+                expect(spyCellRenderer.fillCellCalledWith[i].color).toBe("red");
+                expect(spyCellRenderer.fillCellCalledWith[i].x).toBe(header.x);
+                expect(spyCellRenderer.fillCellCalledWith[i].y).toBe(header.y);
+                expect(spyCellRenderer.fillCellCalledWith[i].width).toBe(header.width);
+                expect(spyCellRenderer.fillCellCalledWith[i].height).toBe(header.height);
+            });
+        });
     });
 
     describe('row cells', () => {
+        const visibleBoundingBoxes = {
+            rows: [{
+                key: 0,
+                x: 0,
+                y: 10,
+                width: 30,
+                height: 10
+            }, {
+                key: 0,
+                x: 30,
+                y: 10,
+                width: 30,
+                height: 10
+            }, {
+                key: 0,
+                x: 60,
+                y: 10,
+                width: 30,
+                height: 10
+            }],
+            headers: [{
+                key: "col1",
+                x: 0,
+                y: 0,
+                width: 30,
+                height: 10
+            }, {
+                key: "col2",
+                x: 30,
+                y: 0,
+                width: 30,
+                height: 10
+            }, {
+                key: "col3",
+                x: 60,
+                y: 0,
+                width: 30,
+                height: 10
+            }]
+        };
+
         beforeEach(() => {
             gridState.rowModel.setRows([{
                 col1: "some value 1",
@@ -101,46 +140,7 @@ describe('GridCellRenderer', () => {
         });
 
         it('should render row cell text for all visible rows', () => {
-            gridCellRenderer.render({
-                rows: [{
-                    key: 0,
-                    x: 0,
-                    y: 10,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: 0,
-                    x: 30,
-                    y: 10,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: 0,
-                    x: 60,
-                    y: 10,
-                    width: 30,
-                    height: 10
-                }],
-                headers: [{
-                    key: "col1",
-                    x: 0,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: "col2",
-                    x: 30,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: "col3",
-                    x: 60,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }]
-            });
+            gridCellRenderer.render(visibleBoundingBoxes);
 
             expect(spyCellRenderer.renderTextCalledWith[3].text).toBe("some value 1");
             expect(spyCellRenderer.renderTextCalledWith[4].text).toBe("some value 2");
@@ -148,46 +148,7 @@ describe('GridCellRenderer', () => {
         });
 
         it('should render row cell text at the proper position and alignment', () => {
-            gridCellRenderer.render({
-                rows: [{
-                    key: 0,
-                    x: 0,
-                    y: 10,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: 0,
-                    x: 30,
-                    y: 10,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: 0,
-                    x: 60,
-                    y: 10,
-                    width: 30,
-                    height: 10
-                }],
-                headers: [{
-                    key: "col1",
-                    x: 0,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: "col2",
-                    x: 30,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }, {
-                    key: "col3",
-                    x: 60,
-                    y: 0,
-                    width: 30,
-                    height: 10
-                }]
-            });
+            gridCellRenderer.render(visibleBoundingBoxes);
 
             expect(spyCellRenderer.renderTextCalledWith[3].align).toBe(Alignment.Center);
             expect(spyCellRenderer.renderTextCalledWith[3].x).toBe(30 / 2);
@@ -204,9 +165,20 @@ describe('GridCellRenderer', () => {
             });
 
             expect(spyCellRenderer.setVisibleAreaCalledWith[0].x).toBe(0);
-            expect(spyCellRenderer.setVisibleAreaCalledWith[0].y).toBe(gridState.headerStyles.getHeaderHeight());
+            expect(spyCellRenderer.setVisibleAreaCalledWith[0].y).toBe(gridState.styles.headerStyles.getHeight());
             expect(spyCellRenderer.setVisibleAreaCalledWith[0].width).toBe(gridState.viewport.width);
-            expect(spyCellRenderer.setVisibleAreaCalledWith[0].height).toBe(gridState.viewport.height - gridState.headerStyles.getHeaderHeight());
+            expect(spyCellRenderer.setVisibleAreaCalledWith[0].height).toBe(gridState.viewport.height - gridState.styles.headerStyles.getHeight());
+        });
+
+        it('should fill row cells with the row background color', () => {
+            gridCellRenderer.render(visibleBoundingBoxes);
+            visibleBoundingBoxes.rows.forEach((cell, i) => {
+                expect(spyCellRenderer.fillCellCalledWith[i + 3].color).toBe("green");
+                expect(spyCellRenderer.fillCellCalledWith[i + 3].x).toBe(cell.x);
+                expect(spyCellRenderer.fillCellCalledWith[i + 3].y).toBe(cell.y);
+                expect(spyCellRenderer.fillCellCalledWith[i + 3].width).toBe(cell.width);
+                expect(spyCellRenderer.fillCellCalledWith[i + 3].height).toBe(cell.height);
+            });
         });
     })
 });

@@ -1,7 +1,7 @@
 import GridState from '../GridState';
 import GridCellMeasurer from '../measurers/GridCellMeasurer';
 import TextMeasurer from '../measurers/TextMeasurer';
-import { ICellStyles, IHeaderStyles, ISchema } from '../types';
+import { ICellStyles, ISchema } from '../types';
 import CanvasRenderer from './CanvasRenderer';
 import CellRenderer from './CellRenderer';
 import GridCellRenderer from './GridCellRenderer';
@@ -34,13 +34,8 @@ class GridCanvasRenderer {
         return this;
     }
 
-    public setHeaderStyles(headerStyles: IHeaderStyles) {
-        this.gridState.headerStyles = headerStyles;
-        return this;
-    }
-
-    public setCellStyles(cellStyles: ICellStyles) {
-        this.gridState.cellStyles = cellStyles;
+    public setStyles(cellStyles: ICellStyles) {
+        this.gridState.styles = cellStyles;
         return this;
     }
 
@@ -73,8 +68,8 @@ class GridCanvasRenderer {
 
     private render() {
         this.canvasRenderer.clear();
-        this.lineRenderer.render(this.cellMeasurer.getVisibleBoundingBoxes());
         this.cellRenderer.render(this.cellMeasurer.getVisibleBoundingBoxes());
+        this.lineRenderer.render(this.cellMeasurer.getVisibleBoundingBoxes());
     }
 }
 

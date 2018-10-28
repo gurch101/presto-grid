@@ -11,7 +11,7 @@ describe('GridLineRenderer', () => {
 
     beforeEach(() => {
         gridState = new GridState();
-        gridState.headerStyles = new HeaderStyles({});
+        gridState.styles.headerStyles = new HeaderStyles({});
         spyLineRenderer = new SpyLineRenderer();
         gridLineRenderer = new GridLineRenderer(spyLineRenderer, gridState);
     });
@@ -33,12 +33,13 @@ describe('GridLineRenderer', () => {
             }],
             rows: []
         };
-        it('should render a horizontal line across the total header width at the header height', () => {
+        it('should render a horizontal line across the total header width at 0 and the header height', () => {
             gridLineRenderer.render(cellBoundingBoxes);
 
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].fromX).toBe(0);
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].toX).toBe(40);
-            expect(spyLineRenderer.renderHorizontalLineCalledWith[0].y).toBe(10);
+            expect(spyLineRenderer.renderHorizontalLineCalledWith[0].y).toBe(0);
+            expect(spyLineRenderer.renderHorizontalLineCalledWith[1].y).toBe(10);
         });
 
         it('should render vertical lines for each header', () => {
@@ -64,26 +65,26 @@ describe('GridLineRenderer', () => {
                 rows: [{
                     key: 0,
                     x: 0,
-                    y: gridState.headerStyles.getHeaderHeight(),
+                    y: gridState.styles.headerStyles.getHeight(),
                     width: 10,
                     height: 10
                 }, {
                     key: 0,
                     x: 10,
-                    y: gridState.headerStyles.getHeaderHeight(),
+                    y: gridState.styles.headerStyles.getHeight(),
 
                     width: 30,
                     height: 10
                 }, {
                     key: 1,
                     x: 0,
-                    y: gridState.headerStyles.getHeaderHeight() + 10,
+                    y: gridState.styles.headerStyles.getHeight() + 10,
                     width: 10,
                     height: 10
                 }, {
                     key: 1,
                     x: 10,
-                    y: gridState.headerStyles.getHeaderHeight() + 10,
+                    y: gridState.styles.headerStyles.getHeight() + 10,
                     width: 30,
                     height: 10
                 }],
@@ -96,10 +97,10 @@ describe('GridLineRenderer', () => {
 
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].fromX).toBe(0);
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].toX).toBe(40);
-            expect(spyLineRenderer.renderHorizontalLineCalledWith[0].y).toBe(gridState.headerStyles.getHeaderHeight());
+            expect(spyLineRenderer.renderHorizontalLineCalledWith[0].y).toBe(gridState.styles.headerStyles.getHeight());
             expect(spyLineRenderer.renderHorizontalLineCalledWith[1].fromX).toBe(0);
             expect(spyLineRenderer.renderHorizontalLineCalledWith[1].toX).toBe(40);
-            expect(spyLineRenderer.renderHorizontalLineCalledWith[1].y).toBe(gridState.headerStyles.getHeaderHeight() + 10);
+            expect(spyLineRenderer.renderHorizontalLineCalledWith[1].y).toBe(gridState.styles.headerStyles.getHeight() + 10);
         });
 
         it('should not render a horizontal line if its y position overlaps with the header', () => {
@@ -107,7 +108,7 @@ describe('GridLineRenderer', () => {
                 rows: [{
                     key: 0,
                     x: 0,
-                    y: gridState.headerStyles.getHeaderHeight() - 5,
+                    y: gridState.styles.headerStyles.getHeight() - 5,
                     width: 10,
                     height: 10
                 }],
@@ -122,23 +123,23 @@ describe('GridLineRenderer', () => {
             gridLineRenderer.render(cellBoundingBoxes);
 
             expect(spyLineRenderer.renderVerticalLineCalledWith[0].x).toBe(0);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[0].fromY).toBe(gridState.headerStyles.getHeaderHeight());
-            expect(spyLineRenderer.renderVerticalLineCalledWith[0].toY).toBe(gridState.headerStyles.getHeaderHeight() + 10);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[0].fromY).toBe(gridState.styles.headerStyles.getHeight());
+            expect(spyLineRenderer.renderVerticalLineCalledWith[0].toY).toBe(gridState.styles.headerStyles.getHeight() + 10);
             expect(spyLineRenderer.renderVerticalLineCalledWith[1].x).toBe(10);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[1].fromY).toBe(gridState.headerStyles.getHeaderHeight());
-            expect(spyLineRenderer.renderVerticalLineCalledWith[1].toY).toBe(gridState.headerStyles.getHeaderHeight() + 10);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[1].fromY).toBe(gridState.styles.headerStyles.getHeight());
+            expect(spyLineRenderer.renderVerticalLineCalledWith[1].toY).toBe(gridState.styles.headerStyles.getHeight() + 10);
             expect(spyLineRenderer.renderVerticalLineCalledWith[2].x).toBe(40);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[2].fromY).toBe(gridState.headerStyles.getHeaderHeight());
-            expect(spyLineRenderer.renderVerticalLineCalledWith[2].toY).toBe(gridState.headerStyles.getHeaderHeight() + 10);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[2].fromY).toBe(gridState.styles.headerStyles.getHeight());
+            expect(spyLineRenderer.renderVerticalLineCalledWith[2].toY).toBe(gridState.styles.headerStyles.getHeight() + 10);
             expect(spyLineRenderer.renderVerticalLineCalledWith[3].x).toBe(0);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[3].fromY).toBe(gridState.headerStyles.getHeaderHeight() + 10);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[3].toY).toBe(gridState.headerStyles.getHeaderHeight() + 20);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[3].fromY).toBe(gridState.styles.headerStyles.getHeight() + 10);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[3].toY).toBe(gridState.styles.headerStyles.getHeight() + 20);
             expect(spyLineRenderer.renderVerticalLineCalledWith[4].x).toBe(10);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[4].fromY).toBe(gridState.headerStyles.getHeaderHeight() + 10);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[4].toY).toBe(gridState.headerStyles.getHeaderHeight() + 20);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[4].fromY).toBe(gridState.styles.headerStyles.getHeight() + 10);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[4].toY).toBe(gridState.styles.headerStyles.getHeight() + 20);
             expect(spyLineRenderer.renderVerticalLineCalledWith[5].x).toBe(40);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[5].fromY).toBe(gridState.headerStyles.getHeaderHeight() + 10);
-            expect(spyLineRenderer.renderVerticalLineCalledWith[5].toY).toBe(gridState.headerStyles.getHeaderHeight() + 20);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[5].fromY).toBe(gridState.styles.headerStyles.getHeight() + 10);
+            expect(spyLineRenderer.renderVerticalLineCalledWith[5].toY).toBe(gridState.styles.headerStyles.getHeight() + 20);
         });
     });
 });

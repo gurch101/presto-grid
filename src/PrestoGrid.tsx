@@ -1,8 +1,8 @@
 import * as React from 'react';
-import CellStyles from './CellStyles';
 import HeaderStyles from './HeaderStyles';
 import GridCanvasRenderer from './renderers/GridCanvasRenderer';
-import { Alignment, ICellStyleProps, ICellStyles, IHeaderStyleProps, IHeaderStyles, ISchema } from './types';
+import RowStyles from './RowStyles';
+import { Alignment, ICellStyleProps, ICellStyles, IHeaderStyleProps, IRowStyles, ISchema } from './types';
 
 interface ISchemaProps {
     key: string,
@@ -14,8 +14,7 @@ interface ISchemaProps {
 interface IPrestoGridProps {
     width: number;
     height: number;
-    headerStyles?: IHeaderStyleProps
-    cellStyles?: ICellStyleProps
+    styles?: ICellStyleProps
     schema: ISchemaProps[]
     rows: object[]
 }
@@ -27,12 +26,11 @@ const getSchema = (schemaProps: ISchemaProps[]): ISchema[] => {
     }));
 }
 
-const getCellStyles = (cellStyleProps: ICellStyleProps = {}): ICellStyles => {
-    return new CellStyles(cellStyleProps);
-};
-
-const getHeaderStyles = (headerStyleProps: IHeaderStyleProps = {}): IHeaderStyles => {
-    return new HeaderStyles(headerStyleProps);
+const getStyles = (cellStyleProps: ICellStyleProps = {}): ICellStyles => {
+    return {
+        headerStyles: new HeaderStyles(cellStyleProps.headerStyles),
+        rowStyles: new RowStyles(cellStyleProps.rowStyles),
+    };
 };
 
 
@@ -44,8 +42,7 @@ class PrestoGrid extends React.Component<IPrestoGridProps> {
         this.gridRenderer
             .setWidth(this.props.width)
             .setHeight(this.props.height)
-            .setHeaderStyles(getHeaderStyles(this.props.headerStyles))
-            .setCellStyles(getCellStyles(this.props.cellStyles))
+            .setStyles(getStyles(this.props.styles))
             .setSchema(getSchema(this.props.schema))
             .setRows(this.props.rows)
             .refresh();

@@ -8,7 +8,7 @@ class HeaderStyles implements IHeaderStyles {
     public readonly fontFamily: string;
     public readonly fontWeight: string;
 
-    constructor(headerStyles: IHeaderStyleProps) {
+    constructor(headerStyles: IHeaderStyleProps = {}) {
         this.color = headerStyles.color || "#ffffff";
         this.backgroundColor = headerStyles.backgroundColor || "red";
         this.verticalPadding = headerStyles.verticalPadding || 12;
@@ -17,11 +17,11 @@ class HeaderStyles implements IHeaderStyles {
         this.fontWeight = headerStyles.fontWeight  || "normal";
     }
 
-    public getHeaderHeight() {
+    public getHeight() {
         return (this.verticalPadding * 2) + this.fontSize;
     }
 
-    public getHeaderFont() {
+    public getFont() {
         return `${this.fontWeight} ${this.fontSize}px ${this.fontFamily}`;
     }
 }

@@ -1,7 +1,7 @@
-import CellStyles from '../CellStyles';
 import GridState from '../GridState';
 import HeaderStyles from '../HeaderStyles';
 import RowModel from '../RowModel';
+import RowStyles from '../RowStyles';
 import SpyTextMeasurer from "../spies/SpyTextMeasurer";
 import { Alignment, ISchema } from '../types';
 import GridCellMeasurer from './GridCellMeasurer';
@@ -28,8 +28,8 @@ describe('GridCellMeasurer', () => {
         }];
         textMeasurer = new SpyTextMeasurer();
         gridState = new GridState();
-        gridState.headerStyles = new HeaderStyles({});
-        gridState.cellStyles = new CellStyles({horizontalPadding: 0});
+        gridState.styles.headerStyles = new HeaderStyles({});
+        gridState.styles.rowStyles = new RowStyles({horizontalPadding: 0});
         gridState.schema = schema;
         gridState.rowModel = new RowModel();
         cellMeasurer = new GridCellMeasurer(textMeasurer, gridState);
@@ -113,8 +113,8 @@ describe('GridCellMeasurer', () => {
         });
 
         it('should not compute cell widths for rows fully hidden by the header', () => {
-            gridState.headerStyles = new HeaderStyles({fontSize: 20, verticalPadding: 10});
-            gridState.cellStyles = new CellStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
+            gridState.styles.headerStyles = new HeaderStyles({fontSize: 20, verticalPadding: 10});
+            gridState.styles.rowStyles = new RowStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
             gridState.viewport = {x: 0, y: 20, width: 30, height: 100};
 
             const rows = [{
@@ -133,9 +133,9 @@ describe('GridCellMeasurer', () => {
 
         it('should compute cell widths for rows partially hidden by the header', () => {
             // header height = 40
-            gridState.headerStyles = new HeaderStyles({fontSize: 20, verticalPadding: 10});
+            gridState.styles.headerStyles = new HeaderStyles({fontSize: 20, verticalPadding: 10});
             // cell height = 20
-            gridState.cellStyles = new CellStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
+            gridState.styles.rowStyles = new RowStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
             gridState.viewport = {x: 0, y: 10, width: 30, height: 100};
 
             const rows = [{
@@ -154,9 +154,9 @@ describe('GridCellMeasurer', () => {
 
         it('should not compute cell widths for rows that are beyond the viewport height', () => {
             // header height = 40
-            gridState.headerStyles = new HeaderStyles({fontSize: 20, verticalPadding: 10});
+            gridState.styles.headerStyles = new HeaderStyles({fontSize: 20, verticalPadding: 10});
             // cell height = 70
-            gridState.cellStyles = new CellStyles({fontSize: 30, verticalPadding: 20, horizontalPadding: 0});
+            gridState.styles.rowStyles = new RowStyles({fontSize: 30, verticalPadding: 20, horizontalPadding: 0});
             gridState.viewport = {x: 0, y: 10, width: 30, height: 100};
 
             const rows = [{
@@ -260,9 +260,9 @@ describe('GridCellMeasurer', () => {
             textMeasurer.measureTextReturn.set("c3", 5);
             gridState.rowModel = new RowModel(rows);
             // header height = 30
-            gridState.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
+            gridState.styles.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
             // cell height = 20
-            gridState.cellStyles = new CellStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
+            gridState.styles.rowStyles = new RowStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
             gridState.viewport = {x: 0, y: 0, width: 30, height: 100};
 
             const boundingBoxes = cellMeasurer.computeVisibleBoundingBoxes().rows;
@@ -284,9 +284,9 @@ describe('GridCellMeasurer', () => {
             textMeasurer.measureTextReturn.set("c3", 5);
             gridState.rowModel = new RowModel(rows);
             // header height = 30
-            gridState.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
+            gridState.styles.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
             // cell height = 20
-            gridState.cellStyles = new CellStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
+            gridState.styles.rowStyles = new RowStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
             gridState.viewport = {x: 0, y: 10, width: 30, height: 100};
 
             const boundingBoxes = cellMeasurer.computeVisibleBoundingBoxes().rows;
@@ -316,9 +316,9 @@ describe('GridCellMeasurer', () => {
             textMeasurer.measureTextReturn.set("c3", 5);
             gridState.rowModel = new RowModel(rows);
             // header height = 30
-            gridState.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
+            gridState.styles.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
             // cell height = 20
-            gridState.cellStyles = new CellStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
+            gridState.styles.rowStyles = new RowStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
             gridState.viewport = {x: 0, y: 0, width: 30, height: 60};
 
             const boundingBoxes = cellMeasurer.computeVisibleBoundingBoxes().rows;
@@ -348,9 +348,9 @@ describe('GridCellMeasurer', () => {
             textMeasurer.measureTextReturn.set("c3", 15);
             gridState.rowModel = new RowModel(rows);
             // header height = 30
-            gridState.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
+            gridState.styles.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
             // cell height = 20
-            gridState.cellStyles = new CellStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
+            gridState.styles.rowStyles = new RowStyles({fontSize: 10, verticalPadding: 5, horizontalPadding: 0});
             gridState.viewport = {x: 0, y: 0, width: 30, height: 60};
 
             const boundingBoxes = cellMeasurer.computeVisibleBoundingBoxes().rows;
@@ -381,9 +381,9 @@ describe('GridCellMeasurer', () => {
             textMeasurer.measureTextReturn.set("c3", 5);
             gridState.rowModel = new RowModel(rows);
             // header height = 30
-            gridState.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
+            gridState.styles.headerStyles = new HeaderStyles({fontSize: 10, verticalPadding: 10});
             // cell height = 20
-            gridState.cellStyles = new CellStyles({fontSize: 10, verticalPadding: 5});
+            gridState.styles.rowStyles = new RowStyles({fontSize: 10, verticalPadding: 5});
             gridState.viewport = {x: 15, y: 25, width: 30, height: 50};
 
             const boundingBoxes = cellMeasurer.computeVisibleBoundingBoxes();

@@ -1,6 +1,5 @@
 # TODO
 
-- header/row background color
 - header/row border color
 - header/row text color
 --------------------------------------
@@ -35,7 +34,7 @@ rows=[{
 }]
 
 // styles do not apply for cells with their own renderers
-cellStyles={
+styles={
     common: {}
     header: {
         common: {},

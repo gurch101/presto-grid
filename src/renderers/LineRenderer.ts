@@ -8,11 +8,13 @@ class LineRenderer implements ILineRenderer {
     }
 
     public renderHorizontalLine(fromX: number, toX: number, y: number) {
-        this.renderLine(fromX, y + 0.5, toX, y + 0.5);
+        const adjustedY = y + 0.5;
+        this.renderLine(fromX, adjustedY, toX, adjustedY);
     }
 
     public renderVerticalLine(fromY: number, toY: number, x: number) {
-        this.renderLine(x + 0.5, fromY, x + 0.5, toY);
+        const adjustedX = x + 0.5;
+        this.renderLine(adjustedX, fromY, adjustedX, toY);
     }
 
     private renderLine(fromX: number, fromY: number, toX: number, toY: number) {

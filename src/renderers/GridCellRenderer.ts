@@ -19,15 +19,19 @@ class GridCellRenderer {
     }
 
     private renderHeaderCells(headers: ICellBoundingBox[], visibleSchema: ISchema[]) {
-        this.cellRenderer.setFont(this.gridState.headerStyles.getHeaderFont());
+        this.cellRenderer.setFont(this.gridState.styles.headerStyles.getFont());
 
         let cellIndex = 0;
         for(const boundingBox of headers) {
             const column = visibleSchema[cellIndex];
+            this.fillCell(
+                this.gridState.getHeaderStyle(column.key, "backgroundColor"),
+                boundingBox
+            )
             this.cellRenderer.renderText(
                 column.label,
                 this.getCellTextX(boundingBox, column.align),
-                this.gridState.headerStyles.verticalPadding + (this.gridState.headerStyles.fontSize / 2),
+                this.gridState.styles.headerStyles.verticalPadding + (this.gridState.styles.headerStyles.fontSize / 2),
                 column.align
             );
             cellIndex++;
@@ -35,29 +39,44 @@ class GridCellRenderer {
     }
 
     private renderRowCells(rowCells: ICellBoundingBox[], visibleSchema: ISchema[]) {
-        this.cellRenderer.setFont(this.gridState.cellStyles.getCellFont());
-        this.cellRenderer.setVisibleArea(0, this.gridState.headerStyles.getHeaderHeight(), this.gridState.viewport.width, this.gridState.viewport.height - this.gridState.headerStyles.getHeaderHeight());
+        this.cellRenderer.setFont(this.gridState.styles.rowStyles.getFont());
+        this.cellRenderer.setVisibleArea(0, this.gridState.styles.headerStyles.getHeight(), this.gridState.viewport.width, this.gridState.viewport.height - this.gridState.styles.headerStyles.getHeight());
 
         let cellIndex = 0;
         for(const boundingBox of rowCells) {
             const column = visibleSchema[cellIndex % visibleSchema.length];
+            this.fillCell(
+                this.gridState.getRowStyle(column.key, "backgroundColor"),
+                boundingBox
+            );
             this.cellRenderer.renderText(
                 this.gridState.rowModel.getCellValue(boundingBox.key as number, column.key),
                 this.getCellTextX(boundingBox, column.align),
-                boundingBox.y + this.gridState.cellStyles.verticalPadding + (this.gridState.cellStyles.fontSize / 2),
+                boundingBox.y + this.gridState.styles.rowStyles.verticalPadding + (this.gridState.styles.rowStyles.fontSize / 2),
                 column.align
             );
             cellIndex++;
         }
+        this.cellRenderer.unsetVisibleArea();
+    }
+
+    private fillCell(color: string, boundingBox: ICellBoundingBox) {
+        this.cellRenderer.fillCell(
+            color,
+            boundingBox.x,
+            boundingBox.y,
+            boundingBox.width,
+            boundingBox.height
+        );
     }
 
     private getCellTextX(boundingBox: ICellBoundingBox, alignment: Alignment): number {
         if(alignment === Alignment.Left) {
-            return boundingBox.x + this.gridState.cellStyles.horizontalPadding;
+            return boundingBox.x + this.gridState.styles.rowStyles.horizontalPadding;
         } else if(alignment === Alignment.Center) {
             return boundingBox.x + boundingBox.width / 2;
         } else {
-            return boundingBox.x + boundingBox.width - this.gridState.cellStyles.horizontalPadding;
+            return boundingBox.x + boundingBox.width - this.gridState.styles.rowStyles.horizontalPadding;
         }
     }
 }
