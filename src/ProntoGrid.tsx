@@ -1,26 +1,8 @@
 import * as React from 'react';
-import GridCanvasRenderer, { Alignment, ICellStyles, IHeaderStyles, ISchema } from './GridCanvasRenderer';
-
-interface IHeaderStyleProps {
-    fontSize?: number;
-    fontFamily?: string;
-    fontWeight?: string;
-    color?: string;
-    backgroundColor?: string;
-    verticalPadding?: number;
-}
-
-interface ICellStyleProps {
-    backgroundColor?: string
-    borderColor?: string
-    borderWidth?: number
-    fontWeight?: string
-    fontSize?: number
-    fontFamily?: string
-    color?: string
-    horizontalPadding?: number
-    verticalPadding?: number
-}
+import CellStyles from './CellStyles';
+import HeaderStyles from './HeaderStyles';
+import GridCanvasRenderer from './renderers/GridCanvasRenderer';
+import { Alignment, ICellStyleProps, ICellStyles, IHeaderStyleProps, IHeaderStyles, ISchema } from './types';
 
 interface ISchemaProps {
     key: string,
@@ -46,27 +28,11 @@ const getSchema = (schemaProps: ISchemaProps[]): ISchema[] => {
 }
 
 const getCellStyles = (cellStyleProps: ICellStyleProps = {}): ICellStyles => {
-    return {
-        borderColor: cellStyleProps.borderColor || "black",
-        borderWidth: cellStyleProps.borderWidth || 1,
-        fontWeight: cellStyleProps.fontWeight || "normal",
-        fontSize: cellStyleProps.fontSize || 16,
-        fontFamily: cellStyleProps.fontFamily || "sans-serif",
-        color: cellStyleProps.color || "#212529",
-        horizontalPadding: cellStyleProps.horizontalPadding || 15,
-        verticalPadding: cellStyleProps.verticalPadding || 10
-    };
+    return new CellStyles(cellStyleProps);
 };
 
 const getHeaderStyles = (headerStyleProps: IHeaderStyleProps = {}): IHeaderStyles => {
-    return {
-        fontWeight: headerStyleProps.fontWeight || "normal",
-        fontSize: headerStyleProps.fontSize || 16,
-        fontFamily: headerStyleProps.fontFamily || "sans-serif",
-        color: headerStyleProps.color || "#ffffff",
-        backgroundColor: headerStyleProps.backgroundColor || "red",
-        verticalPadding: headerStyleProps.verticalPadding || 12
-    };
+    return new HeaderStyles(headerStyleProps);
 };
 
 
@@ -109,7 +75,7 @@ class ProntoGrid extends React.Component<IProntoGridProps> {
             <div
                 data-pronto-grid="true"
                 ref={this.scrollContainer}
-                style={{overflow: "auto", width: this.props.width, height: this.props.height}} />
+                style={{overflow: "auto", width: this.props.width, height: this.props.height, marginLeft: 10}} />
         );
     }
 }

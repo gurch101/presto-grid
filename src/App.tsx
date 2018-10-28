@@ -131,7 +131,7 @@ class App extends React.Component<any, IAppState> {
           Apply Changes
         </button>
         <ProntoGrid
-          width={500}
+          width={1000}
           height={500}
           schema={this.state.schema}
           rows={this.state.rows} />

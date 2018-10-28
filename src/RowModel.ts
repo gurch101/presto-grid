@@ -1,4 +1,4 @@
-import { ISchema } from './GridCanvasRenderer';
+import { ISchema } from './types';
 
 class RowModel {
     private rows: object[]
@@ -6,6 +6,7 @@ class RowModel {
 
     constructor(rows?: object[]) {
         this.rows = rows || [];
+        this.valueFormatters = {};
     }
 
     public setRows(rows: object[]) {
@@ -30,7 +31,7 @@ class RowModel {
         if(this.valueFormatters[attributeName]) {
             return this.valueFormatters[attributeName](rawValue);
         }
-        return rawValue;
+        return rawValue || "";
     }
 
     public getRowCount() {
