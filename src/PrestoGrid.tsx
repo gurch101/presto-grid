@@ -11,7 +11,7 @@ interface ISchemaProps {
     valueFormatter?: (value: any) => string
 };
 
-interface IProntoGridProps {
+interface IPrestoGridProps {
     width: number;
     height: number;
     headerStyles?: IHeaderStyleProps
@@ -36,7 +36,7 @@ const getHeaderStyles = (headerStyleProps: IHeaderStyleProps = {}): IHeaderStyle
 };
 
 
-class ProntoGrid extends React.Component<IProntoGridProps> {
+class PrestoGrid extends React.Component<IPrestoGridProps> {
     private scrollContainer = React.createRef<HTMLDivElement>()
     private gridRenderer: GridCanvasRenderer
 
@@ -73,12 +73,12 @@ class ProntoGrid extends React.Component<IProntoGridProps> {
     public render() {
         return (
             <div
-                data-pronto-grid="true"
+                data-presto-grid="true"
                 ref={this.scrollContainer}
                 style={{overflow: "auto", width: this.props.width, height: this.props.height, marginLeft: 10}} />
         );
     }
 }
 
-export default ProntoGrid;
-export { IProntoGridProps, IHeaderStyleProps, ICellStyleProps, ISchemaProps, Alignment };
+export default PrestoGrid;
+export { IPrestoGridProps, IHeaderStyleProps, ICellStyleProps, ISchemaProps, Alignment };

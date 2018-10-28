@@ -1,4 +1,4 @@
-import { Alignment } from '../ProntoGrid';
+import { Alignment } from '../PrestoGrid';
 import { ICellRenderer } from '../types';
 
 class CellRenderer implements ICellRenderer {

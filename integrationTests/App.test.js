@@ -36,7 +36,7 @@ const setColumnProps = async (newColumnProps) => {
     return await page.click('[data-apply-changes]');
 };
 
-describe('ProntoGrid', () => {
+describe('PrestoGrid', () => {
     let columnProps;
     let originalColumnProps;
     beforeAll(async () => {

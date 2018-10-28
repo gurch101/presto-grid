@@ -1,6 +1,6 @@
 import * as React from 'react';
 import data from './data';
-import ProntoGrid, { Alignment, ISchemaProps } from './ProntoGrid';
+import PrestoGrid, { Alignment, ISchemaProps } from './PrestoGrid';
 
 interface IAppState {
   rows: object[],
@@ -130,7 +130,7 @@ class App extends React.Component<any, IAppState> {
           onClick={this.applyUpdates}>
           Apply Changes
         </button>
-        <ProntoGrid
+        <PrestoGrid
           width={1000}
           height={500}
           schema={this.state.schema}

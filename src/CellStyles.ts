@@ -1,4 +1,4 @@
-import { ICellStyleProps } from './ProntoGrid';
+import { ICellStyleProps } from './PrestoGrid';
 import { ICellStyles } from "./types";
 
 class CellStyles implements ICellStyles {
