@@ -19,11 +19,14 @@ class GridCellRenderer {
     }
 
     private renderHeaderCells(headers: ICellBoundingBox[], visibleSchema: ISchema[]) {
-        this.cellRenderer.setFont(this.gridState.styles.headerStyles.getFont());
 
         let cellIndex = 0;
         for(const boundingBox of headers) {
             const column = visibleSchema[cellIndex];
+            this.cellRenderer.setFont(
+                this.gridState.styles.headerStyles.getFont(),
+                this.gridState.getHeaderStyle(column.key, 'color')
+            );
             this.fillCell(
                 this.gridState.getHeaderStyle(column.key, "backgroundColor"),
                 boundingBox
@@ -39,12 +42,15 @@ class GridCellRenderer {
     }
 
     private renderRowCells(rowCells: ICellBoundingBox[], visibleSchema: ISchema[]) {
-        this.cellRenderer.setFont(this.gridState.styles.rowStyles.getFont());
         this.cellRenderer.setVisibleArea(0, this.gridState.styles.headerStyles.getHeight(), this.gridState.viewport.width, this.gridState.viewport.height - this.gridState.styles.headerStyles.getHeight());
 
         let cellIndex = 0;
         for(const boundingBox of rowCells) {
             const column = visibleSchema[cellIndex % visibleSchema.length];
+            this.cellRenderer.setFont(
+                this.gridState.styles.rowStyles.getFont(),
+                this.gridState.getRowStyle(column.key, "color")
+            );
             this.fillCell(
                 this.gridState.getRowStyle(column.key, "backgroundColor"),
                 boundingBox

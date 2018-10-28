@@ -43,7 +43,6 @@ export interface IRowStyleProps {
 }
 
 export interface IHeaderStyles extends IFontStyles, IStyles {
-    color: string;
     verticalPadding: number;
 }
 
@@ -58,7 +57,6 @@ export interface ICellStyles {
 }
 
 export interface IRowStyles extends IFontStyles, IStyles {
-    color: string;
     horizontalPadding: number;
     verticalPadding: number;
     borderColor: string;
@@ -92,7 +90,7 @@ export interface ILineRenderer {
 }
 
 export interface ICellRenderer {
-    setFont: (font: string) => void;
+    setFont: (font: string, color: string) => void;
     setVisibleArea: (x: number, y: number, width: number, height: number) => void;
     unsetVisibleArea: () => void;
     renderText: (text: string, x: number, y: number, align: Alignment) => void;

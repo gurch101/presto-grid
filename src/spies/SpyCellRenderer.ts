@@ -6,8 +6,8 @@ class SpyCellRenderer implements ICellRenderer {
     public renderTextCalledWith: any[] = [];
     public fillCellCalledWith: any[] = [];
 
-    public setFont(font: string) {
-        this.setFontCalledWith.push(font);
+    public setFont(font: string, color: string) {
+        this.setFontCalledWith.push({font, color});
     }
 
     public setVisibleArea(x: number, y: number, width: number, height: number) {

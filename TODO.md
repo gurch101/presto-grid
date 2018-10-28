@@ -1,7 +1,6 @@
 # TODO
 
 - header/row border color
-- header/row text color
 --------------------------------------
 - sticky columns
 --------------------------------------

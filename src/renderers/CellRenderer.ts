@@ -8,8 +8,9 @@ class CellRenderer implements ICellRenderer {
         this.context = context;
     }
 
-    public setFont(font: string) {
+    public setFont(font: string, color: string) {
         this.context.font = font;
+        this.context.fillStyle = color;
     }
 
     public setVisibleArea(x: number, y: number, width: number, height: number) {

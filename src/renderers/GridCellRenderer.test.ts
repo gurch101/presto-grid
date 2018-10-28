@@ -15,8 +15,15 @@ describe('GridCellRenderer', () => {
     beforeEach(() => {
         spyCellRenderer = new SpyCellRenderer();
         gridState = new GridState();
-        gridState.styles.headerStyles = new HeaderStyles({backgroundColor: "red"});
-        gridState.styles.rowStyles = new RowStyles({horizontalPadding, backgroundColor: "green"});
+        gridState.styles.headerStyles = new HeaderStyles({
+            backgroundColor: "red",
+            color: "white"
+        });
+        gridState.styles.rowStyles = new RowStyles({
+            horizontalPadding,
+            backgroundColor: "green",
+            color: "black"
+        });
         gridState.schema = [{
             key: "col1",
             label: "Column 1",
@@ -58,11 +65,13 @@ describe('GridCellRenderer', () => {
             }],
             rows: []
         };
-        it('should render header text for all visible headers', () => {
+        it('should render header text in the correct font color for all visible headers', () => {
             gridCellRenderer.render(visibleBoundingBoxes);
 
             expect(spyCellRenderer.renderTextCalledWith[0].text).toBe("Column 1");
             expect(spyCellRenderer.renderTextCalledWith[1].text).toBe("Column 2");
+            expect(spyCellRenderer.setFontCalledWith[0].color).toBe("white");
+            expect(spyCellRenderer.setFontCalledWith[1].color).toBe("white");
         });
 
         it('should render header text at the proper position and alignment', () => {
@@ -139,12 +148,15 @@ describe('GridCellRenderer', () => {
             }]);
         });
 
-        it('should render row cell text for all visible rows', () => {
+        it('should render row cell text in the correct font color for all visible rows', () => {
             gridCellRenderer.render(visibleBoundingBoxes);
 
             expect(spyCellRenderer.renderTextCalledWith[3].text).toBe("some value 1");
             expect(spyCellRenderer.renderTextCalledWith[4].text).toBe("some value 2");
             expect(spyCellRenderer.renderTextCalledWith[5].text).toBe("some value 3");
+            expect(spyCellRenderer.setFontCalledWith[3].color).toBe("black");
+            expect(spyCellRenderer.setFontCalledWith[4].color).toBe("black");
+            expect(spyCellRenderer.setFontCalledWith[5].color).toBe("black");
         });
 
         it('should render row cell text at the proper position and alignment', () => {
