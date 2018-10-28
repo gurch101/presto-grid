@@ -19,11 +19,11 @@ class GridState {
         };
     }
 
-    public getHeaderStyle(key: string, styleKey: string) {
+    public getHeaderStyle(key: string | null, styleKey: string) {
         return this.styles.headerStyles[styleKey];
     }
 
-    public getRowStyle(key: string, styleKey: string) {
+    public getRowStyle(key: string | null, styleKey: string) {
         return this.styles.rowStyles[styleKey];
     }
 }

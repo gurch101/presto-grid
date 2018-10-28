@@ -25,6 +25,7 @@ export interface IHeaderStyleProps {
     fontSize?: number;
     fontFamily?: string;
     fontWeight?: string;
+    borderColor?: string;
     color?: string;
     backgroundColor?: string;
     verticalPadding?: number;
@@ -59,7 +60,6 @@ export interface ICellStyles {
 export interface IRowStyles extends IFontStyles, IStyles {
     horizontalPadding: number;
     verticalPadding: number;
-    borderColor: string;
     borderWidth: number;
 }
 
@@ -85,8 +85,11 @@ export interface IVisibleBoundingBoxes {
 }
 
 export interface ILineRenderer {
-    renderHorizontalLine: (fromX: number, toX: number, y: number) => void
-    renderVerticalLine: (fromY: number, toY: number, x: number) => void
+    setLineColor: (color: string) => void;
+    renderHorizontalLine: (fromX: number, toX: number, y: number) => void;
+    renderVerticalLine: (fromY: number, toY: number, x: number) => void;
+    setVisibleArea: (x: number, y: number, width: number, height: number) => void;
+    unsetVisibleArea: () => void;
 }
 
 export interface ICellRenderer {

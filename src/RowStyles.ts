@@ -12,7 +12,7 @@ class RowStyles implements IRowStyles {
     public readonly fontWeight: string;
 
     constructor(rowStyleProps: IRowStyleProps = {}) {
-        this.borderColor = rowStyleProps.borderColor || "black";
+        this.borderColor = rowStyleProps.borderColor || "#dee2e6";
         this.borderWidth = rowStyleProps.borderWidth || 1;
         this.fontWeight = rowStyleProps.fontWeight || "normal";
         this.fontSize = rowStyleProps.fontSize || 16;

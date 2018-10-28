@@ -1,5 +1,6 @@
 import GridState from '../GridState';
 import HeaderStyles from '../HeaderStyles';
+import RowStyles from '../RowStyles';
 import SpyLineRenderer from '../spies/SpyLineRenderer';
 import { IVisibleBoundingBoxes } from '../types';
 import GridLineRenderer from './GridLineRenderer';
@@ -11,7 +12,12 @@ describe('GridLineRenderer', () => {
 
     beforeEach(() => {
         gridState = new GridState();
-        gridState.styles.headerStyles = new HeaderStyles({});
+        gridState.styles.headerStyles = new HeaderStyles({
+            borderColor: "red"
+        });
+        gridState.styles.rowStyles = new RowStyles({
+            borderColor: "blue"
+        });
         spyLineRenderer = new SpyLineRenderer();
         gridLineRenderer = new GridLineRenderer(spyLineRenderer, gridState);
     });
@@ -33,9 +39,10 @@ describe('GridLineRenderer', () => {
             }],
             rows: []
         };
-        it('should render a horizontal line across the total header width at 0 and the header height', () => {
+        it('should render a horizontal line across the total header width at 0 and the header height in the correct color', () => {
             gridLineRenderer.render(cellBoundingBoxes);
 
+            expect(spyLineRenderer.setLineColorCalledWith[0]).toBe("red");
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].fromX).toBe(0);
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].toX).toBe(40);
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].y).toBe(0);
@@ -92,9 +99,10 @@ describe('GridLineRenderer', () => {
             };
         });
 
-        it('should render horizontal lines across the viewport for each row', () => {
+        it('should render horizontal lines across the viewport for each row in the correct color', () => {
             gridLineRenderer.render(cellBoundingBoxes);
 
+            expect(spyLineRenderer.setLineColorCalledWith[1]).toBe("blue");
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].fromX).toBe(0);
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].toX).toBe(40);
             expect(spyLineRenderer.renderHorizontalLineCalledWith[0].y).toBe(gridState.styles.headerStyles.getHeight());
@@ -140,6 +148,15 @@ describe('GridLineRenderer', () => {
             expect(spyLineRenderer.renderVerticalLineCalledWith[5].x).toBe(40);
             expect(spyLineRenderer.renderVerticalLineCalledWith[5].fromY).toBe(gridState.styles.headerStyles.getHeight() + 10);
             expect(spyLineRenderer.renderVerticalLineCalledWith[5].toY).toBe(gridState.styles.headerStyles.getHeight() + 20);
+        });
+
+        it('should exclude headers from the visible row line area', () => {
+            gridLineRenderer.render(cellBoundingBoxes);
+
+            expect(spyLineRenderer.setVisibleAreaCalledWith[0].x).toBe(0);
+            expect(spyLineRenderer.setVisibleAreaCalledWith[0].y).toBe(gridState.styles.headerStyles.getHeight());
+            expect(spyLineRenderer.setVisibleAreaCalledWith[0].width).toBe(gridState.viewport.width);
+            expect(spyLineRenderer.setVisibleAreaCalledWith[0].height).toBe(gridState.viewport.height - gridState.styles.headerStyles.getHeight());
         });
     });
 });

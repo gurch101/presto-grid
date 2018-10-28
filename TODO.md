@@ -1,6 +1,8 @@
 # TODO
 
-- header/row border color
+- header/row border width
+- borders every X rows
+- border top/bottom styles
 --------------------------------------
 - sticky columns
 --------------------------------------

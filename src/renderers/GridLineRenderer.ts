@@ -17,6 +17,7 @@ class GridLineRenderer {
 
     private renderHeaderLines(headerBoundingBoxes: ICellBoundingBox[]) {
         let lastX = 0;
+        this.lineRenderer.setLineColor(this.gridState.getHeaderStyle(null, "borderColor"));
         for(let i = 0; i < headerBoundingBoxes.length; i++) {
             const headerBoundingBox = headerBoundingBoxes[i];
             if(headerBoundingBox.x >= lastX) {
@@ -34,6 +35,8 @@ class GridLineRenderer {
     private renderCellLines(cellBoundingBoxes: ICellBoundingBox[]) {
         let lastRowIndex = 0;
         const headerHeight = this.gridState.styles.headerStyles.getHeight();
+        this.lineRenderer.setLineColor(this.gridState.getRowStyle(null, "borderColor"));
+        this.lineRenderer.setVisibleArea(0, this.gridState.styles.headerStyles.getHeight(), this.gridState.viewport.width, this.gridState.viewport.height - this.gridState.styles.headerStyles.getHeight());
         for(let i = 0; i < cellBoundingBoxes.length; i++) {
             const cellBoundingBox = cellBoundingBoxes[i];
             lastRowIndex = cellBoundingBox.key as number;
@@ -46,6 +49,7 @@ class GridLineRenderer {
                 }
             }
         }
+        this.lineRenderer.unsetVisibleArea();
     }
 }
 

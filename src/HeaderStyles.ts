@@ -7,14 +7,16 @@ class HeaderStyles implements IHeaderStyles {
     public readonly fontSize: number;
     public readonly fontFamily: string;
     public readonly fontWeight: string;
+    public readonly borderColor: string;
 
     constructor(headerStyles: IHeaderStyleProps = {}) {
-        this.color = headerStyles.color || "#ffffff";
-        this.backgroundColor = headerStyles.backgroundColor || "red";
+        this.color = headerStyles.color || "#212529";
+        this.backgroundColor = headerStyles.backgroundColor || "white";
         this.verticalPadding = headerStyles.verticalPadding || 12;
         this.fontSize = headerStyles.fontSize || 16;
         this.fontFamily = headerStyles.fontFamily || "sans-serif";
-        this.fontWeight = headerStyles.fontWeight  || "normal";
+        this.fontWeight = headerStyles.fontWeight  || "bold";
+        this.borderColor = headerStyles.borderColor || "#dee2e6";
     }
 
     public getHeight() {
